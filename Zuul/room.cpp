@@ -2,20 +2,21 @@
 #include <vector>
 #include <map>
 #include "room.h"
+#include "item.h"
 
-parent::room(){
-  items = new vector<char *>();
+room::room(){
+  items = new vector<item *>();
   exits = new map<char *, room *>();
-  name = new char[251];
+  description = new char[251];
 }
 
-void addItem(char* item){
-  items->push_back(item);
+void room::addItem(item* it){
+  items->push_back(it);
 }
 
-void setExit(char* direction, room* rm){
+void room::setExit(char* direction, room* rm){
   if(exits->size()==0){
-    exit->insert({direction, rm});
+    exits->insert({direction, rm});
     return;
   }
   map<char*, room*>::iterator it = exits->begin();

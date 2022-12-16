@@ -1,14 +1,21 @@
-#include <vector>
+#ifndef ROOM_H
+#define ROOM_H
+
 #include <map>
-using namespace std
+#include <vector>
+#include "item.h"
+
+using namespace std;
 
 class room{
  public:
   room();
-  vector<char*> items;
-  map<char*, room*> exits;
-  char name[251];
+  vector<item*>* items;
+  map<char*, room*>* exits;
+  char* description;
   
-  void addItem(char* item);
+  void addItem(item* it);
   void setExit(char* direction, room* rm);
 };
+
+#endif // ROOM_H

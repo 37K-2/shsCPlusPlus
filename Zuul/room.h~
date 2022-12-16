@@ -1,0 +1,19 @@
+class room{
+ public:
+  room();
+  void setRoomWest(int room);
+  void setRoomEast(int room);
+  void setRoomNorth(int room);
+  void setRoomSouth(int room);
+
+  int getRoomWest();
+  int getRoomEast();
+  int getRoomNorth();
+  int getRoomSouth();
+  
+  void setItems(vector<char*> items); 
+  void getItems(int room);
+protected:
+  vector<char*> itemsInRoom;
+  int roomNumber;
+};

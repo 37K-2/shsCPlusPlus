@@ -1,3 +1,8 @@
+/* Zuul (C++ Version) By: Aaron Guo, Period: 6
+* You are stuck in a room, and you need to get all 5 items and arrive in room/sector 23 to escape
+* TL;DR/Summary: Basically Zuul but coded in C++.
+*/
+
 #include <iostream>
 #include <vector>
 #include <cstring>
@@ -16,27 +21,28 @@ const char LOOK_COMMAND[] = "look";
 const char TAKE_COMMAND[] = "take";
 const char DROP_COMMAND[] = "drop";
 const char GO_COMMAND[] = "go";
-const char INVENTORY_COMMAND[] = "inventory";
+const char INVENTORY_COMMAND[] = "inv";
 const char HELP_COMMAND[] = "help";
 const char QUIT_COMMAND[] = "quit";
 
 int main() {
-    // gacha ticket - added
+    // gacha ticket
     item* gacha_ticket = new item();
     strcpy(gacha_ticket->description, "gacha-ticket");
-    // airi fly plane - added
+    // airi fly plane
     item* airi_fly_plane = new item();
     strcpy(airi_fly_plane->description, "airi-fly-plane");
-    // kanade ballin - added
+    // kanade ballin
     item* kanade_ballin = new item();
     strcpy(kanade_ballin->description, "kanade-ballin");
-    // paid crystals - added
+    // paid crystals
     item* paid_crystals = new item();
-    strcpy(paid_crystals->description, "crystals-g");
-    // level 36 ap - added
+    strcpy(paid_crystals->description, "paid-crystals");
+    // level 36 ap=
     item* level_36_ap = new item();
     strcpy(level_36_ap->description, "level-36-ap");
 
+    //rooms
     room* r1 = new room();
     strcpy(r1->description, "You're in Sector 1 of the maze.");
     room* r2 = new room();
@@ -84,13 +90,16 @@ int main() {
     room* r23 = new room();
     strcpy(r23->description, "You're in Sector 23 of the maze.");
 
+    //set all exits
     r16->setExit(EXIT_RIGHT, r5);
 
-    r20->setExit(EXIT_DOWN, r22);
-    r20->setExit(EXIT_RIGHT, r15);
+    r20->setExit(EXIT_LEFT, r13);
     r20->addItem(level_36_ap);
 
-    r22->setExit(EXIT_UP, r20);
+    r21->setExit(EXIT_RIGHT, r15);
+    r21->setExit(EXIT_DOWN, r22);
+
+    r22->setExit(EXIT_UP, r21);
     r22->setExit(EXIT_DOWN, r23);
     r22->addItem(airi_fly_plane);
 
@@ -105,7 +114,7 @@ int main() {
     r5->setExit(EXIT_RIGHT, r1);
 
     r15->setExit(EXIT_UP, r5);
-    r15->setExit(EXIT_LEFT, r20);
+    r15->setExit(EXIT_LEFT, r21);
 
     r7->setExit(EXIT_RIGHT, r2);
 
@@ -154,18 +163,171 @@ int main() {
     
     r10->setExit(EXIT_LEFT, r3);
 
+    //current room & inv
     room* currentRoom = r1;
     vector<item*>* inventory = new vector<item*>();
 
     while(true) {
+        //start
         cout << currentRoom->description << endl;
         cout << "Type \"help\" to view your available commands." << endl;
         cout << " > ";
         char cmd1[101]; // make it large to prevent bugs
+        char cmd2[101];
         cin >> cmd1;
         cout << "Your command is: " << cmd1 << endl;
+
+        //commands
+        if(strcmp(cmd1, LOOK_COMMAND) == 0) {
+            //look for room
+            cout << "There are " << currentRoom->exits->size() << " exits in this room: " << endl;
+            map<char *, room *>::iterator it = currentRoom->exits->begin(); // the exits of the room
+            for (auto it = currentRoom->exits->begin(); it != currentRoom->exits->end(); it++)
+            {
+                cout << "   " << it->first;
+            }
+            cout << endl;
+            if (currentRoom->items->size() > 0)
+            {
+                //item exits in this room
+                cout << "There's also an item called \"" << currentRoom->items->at(0)->description << "\"..." << endl;
+            }
+        }
+        //take item
+        if(strcmp(cmd1, TAKE_COMMAND) == 0) {
+            cout << "What would you like to take?" << endl;
+            cout << " > ";
+            cin >> cmd2;
+
+            int idx = 0;
+            vector<item*>::iterator it;
+            bool found = false;
+            for (it = currentRoom->items->begin(); it < currentRoom->items->end(); it++)
+            {
+                //attempt to find item and put in inv, erase from room
+                if (strcmp((*it)->description, cmd2) == 0)
+                {
+                inventory->push_back(currentRoom->items->at(idx));
+                currentRoom->items->erase(currentRoom->items->begin() + idx);
+                cout << "You picked up the \"" << cmd2 << "\" that was in the room." << endl;
+                cout << "Type \"inventory\" to view your inventory at any time." << endl;
+                found = true;
+                break;
+                }
+                idx++;
+            }
+            if (!found) //item does not exist (or in the room)
+            {
+                cout << "I couldn't find that item anywhere..." << endl;
+            }
+        }
+        //drop item
+        if(strcmp(cmd1, DROP_COMMAND) == 0) {
+            cout << "What would you like to drop?" << endl;
+            cout << " > ";
+            cin >> cmd2;
+
+            int idx = 0;
+            vector<item*>::iterator it;
+            for (it = inventory->begin(); it < inventory->end(); it++)
+            {
+                if (strcmp((*it)->description, cmd2) == 0)
+                {
+                    //same thing as take except the opposite, attempt to find item and put in room, erase from inv.
+                    currentRoom->items->push_back(inventory->at(idx));
+                    inventory->erase(inventory->begin() + idx);
+                    cout << "You dropped the \"" << cmd2 << "\" into the room." << endl;
+                    cout << "Type \"inventory\" to view your inventory at any time." << endl;
+                }
+                idx++;
+            }
+        }
+
+        //direction
+        if(strcmp(cmd1, GO_COMMAND) == 0) {
+            cout << "What direction would you like to go? (";
+            int count = 0;
+            map<char *, room *>::iterator it1 = currentRoom->exits->begin();
+            for (auto it1 = currentRoom->exits->begin(); it1 != currentRoom->exits->end(); it1++)
+            {
+                //prints out the exits for the room
+                if(count == currentRoom->exits->size()) {
+                    cout << it1->first << ") > ";
+                } else {
+                    cout << it1->first << "/";
+                }
+                count++;
+            }
+            cout << ") > ";
+            cin >> cmd2;
+
+            bool roomExists = false;
+            map<char *, room *>::iterator it2 = currentRoom->exits->begin();
+            for (auto it2 = currentRoom->exits->begin(); it2 != currentRoom->exits->end(); it2++)
+            {
+                if (strcmp(it2->first, cmd2) == 0) {
+                    roomExists = true;
+                    currentRoom = it2->second;
+                    //if at ending room (room/sector 23)
+                    if (strcmp(currentRoom->description, r23->description) == 0) { // The player is in the "winning" room
+                        //win condition is to have all 5 items
+                        if(inventory->size() != 5) {
+                            cout << "Collect all 5 items to escape the maze! (You need " << (5 - inventory->size()) << " more)" << endl;
+                            //push player back to room/sector 22
+                            currentRoom = r22;
+                            break;
+                        } else {
+                            //good job (?)
+                            cout << "You successfully tiered and got rank #1 in the event!" << endl;
+                            cout << "Thanks for playing." << endl;
+                            return 0;
+                        }
+                    }
+                    else {
+                        cout << "You moved rooms." << endl << currentRoom->description << endl;
+                        break;
+                    }
+                }
+            }
+            if (!roomExists)
+            {
+                //room does not exist, or rather, an exit
+                cout << "There isn't an exit there!" << endl;
+            }
+        }
+        //check inv
+        if(strcmp(cmd1, INVENTORY_COMMAND) == 0) {
+            if(inventory->size() == 0) {
+                cout << "Your inventory is empty!" << endl;
+            } else {
+                //print out inv contents
+                cout << "You have the following items:" << endl;
+                vector<item*>::iterator it;
+                for(it = inventory->begin(); it < inventory->end(); it++) {
+                    cout << "   " << (*it)->description;
+                }
+                cout << endl;
+            }
+        }
+        //help stuff
+        if(strcmp(cmd1, HELP_COMMAND) == 0) {
+            cout << "Project Sekai Grind - Command Help" << endl;
+            cout << "Your available commands are:" << endl;
+            cout << "   look - Look around a room for possible exits and items." << endl;
+            cout << "   take - Take items from a room." << endl;
+            cout << "   drop - Drop items from your inventory into the room that you're cuurrently in." << endl;
+            cout << "   go - Move around the map by going from room to room." << endl;
+            cout << "   inv - Check your inventory." << endl;
+            cout << "   help - Display this message." << endl;
+            cout << "   quit - Quit the game." << endl;
+        }
+        //quit command
+        if(strcmp(cmd1, QUIT_COMMAND) == 0) {
+            cout << "Thank you so much for playing!" << endl;
+            return 0;
+        }
     }
 
-
+    
     return 0;
 }

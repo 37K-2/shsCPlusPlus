@@ -6,17 +6,17 @@ using namespace std;
 
 class Node{
  public:
-  Node(Student* student); // node takes in a student
+  Node(Student* student); // node constructor 
   ~Node(); // for destructor
 
   Node* getNext(); //get the next node
   Student* getStudent(); // get the next student
-  void setNext(Node* nextNode); // set next node
-  void setStudent(Student* student); // set next student
+  void setNext(Node* nextNode); // set next node that is pointed to
+  void setStudent(Student* student); // set next student that is pointed to
   
  private:
-  Student* student; // required variables (student)
-  Node* nextNode; //required variables (nextnode)
+  Student* student; // student pointer
+  Node* nextNode; // node pointer
 };
 
 #endif

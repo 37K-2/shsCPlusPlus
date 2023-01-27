@@ -1,61 +1,102 @@
 // Linked Lists pt.1 By: Aaron Guo, Period 6
-// Test if node.h and node.cpp actually works (if it makes a linked list)
+// Test if node.h and node.cpp actually works (if it makes a linked linkedlist)
 #include <iostream>
 #include <cstring>
+#include <iomanip>
 #include "node.h"
+#include "linkedList.h"
 #include "student.h"
 using namespace std;
 
-const char ADD_CMD[] = "ADD";
-const char PRINT_CMD[] = "PRINT";
-const char DELETE_CMD[] = "DELETE";
-const char QUIT_CMD[] = "QUIT";
-const char AVG_CMD[] = "AVERAGE";
+//commands
+const char ADD[] = "ADD"; 
+const char PRINT[] = "PRINT";
+const char DELETE[] = "DELETE";
+const char QUIT[] = "QUIT";
+const char AVG[] = "AVERAGE";
 
-void addStudent()
+//function prototypes
+void addStudent(LinkedList* linkedlist);
+void deleteStudent(LinkedList* linkedlist);
+void averageStudent(LinkedList* linkedlist);
 
 int main(){
-    // set current node counting and the first node to nothing (null)
-    Node* currentNode = NULL;
-    Node* firstNode = NULL;
-    
-    // add students via first and last name, id, and gpa, and insert into the list
-    Student *s1 = new Student();
-    strcpy(s1->firstName, "Aaron");
-    strcpy(s1->lastName, "Guo");
-    s1->id = 419452;
-    s1->gpa = 4.14;
-    Node *id1 = new Node(s1);
-    firstNode = id1;
+    cout << "Student List C++" << endl;
+    cout << fixed << setprecision(2); //set to hundredths
 
-    Student *s2 = new Student();
-    strcpy(s2->firstName, "Ena");
-    strcpy(s2->lastName, "Shinonome");
-    s2->id = 430010;
-    s2->gpa = 2.57;
-    Node *id2 = new Node(s2);
-    id1->setNext(id2); // connect the two nodes via setNext
+    LinkedList* linkedlist = new LinkedList(); //new linkedlist
 
-    Student *s3 = new Student();
-    strcpy(s3->firstName, "Airi");
-    strcpy(s3->lastName, "Momoi");
-    s3->id = 319218;
-    s3->gpa = 6.32;
-    Node *id3 = new Node(s3);
-    id2->setNext(id3);
+    char cmd[8]; //command
 
-    currentNode = firstNode; //set the first node to be the current node
-
-    while(currentNode != NULL) {
-        cout << "Student Name: " << currentNode->getStudent()->firstName << " " << currentNode->getStudent()->lastName << "\nID: " << currentNode->getStudent()->id << "\nGPA: " << currentNode->getStudent()->gpa << endl;
-        currentNode = currentNode->getNext();
-    }//print out the nodes
-
-    /*
-    for(int x=0; x<currentNode->getStudent(); x++){
-        cout << "Student Name: " << currentNode->getStudent()->firstName << " " << currentNode->getStudent()->lastName << "\nID: " << currentNode->getStudent()->id << "\nGPA: " << currentNode->getStudent()->gpa << endl;
-        currentNode = currentNode->getNext();
+    while(true){
+        cout << "Type 'ADD', 'PRINT', 'DELETE', 'AVERAGE', 'QUIT': " << endl;
+        cin >> cmd;
+        if(strcmp(cmd, ADD) == 0)
+            addStudent(linkedlist);
+        if(strcmp(cmd, PRINT) == 0) {
+            if(linkedlist->getSize() == NULL){
+                cout << "List is empty :(" << endl;
+            } else {
+                linkedlist->printNode(linkedlist->getHead());
+                cout << endl;
+            }
+        }
+        if(strcmp(cmd, DELETE) == 0)
+            deleteStudent(linkedlist);
+        if(strcmp(cmd, AVG) == 0)
+            averageStudent(linkedlist);
+        if(strcmp(cmd, QUIT) == 0){
+            cout << "TEEHEE" << endl;
+            delete linkedlist;
+            break;
+        }
     }
-    */
     return 0;
+}
+
+void addStudent(LinkedList* linkedlist){
+    Student* student = new Student();
+    
+    cout << "First Name: ";
+    cin >> student->firstName;
+    cout << "Last Name: ";
+    cin >> student->lastName;
+    cout << "ID: ";
+    cin >> student->id;
+    cout << "GPA: ";
+    cin >> student->gpa;
+
+    if(linkedlist->idExists(student->id)){
+        cout << "ID already exists." << endl;
+        delete student;
+        return;
+    }
+    linkedlist->add(linkedlist->getHead(), NULL, student, true);
+    cout << "Added Student" << endl;
+}
+
+void deleteStudent(LinkedList* linkedlist){
+    if(linkedlist->getSize() == NULL){
+        cout << "List is empty :(" << endl;
+        return;
+    }
+    cout << "Enter ID to delete: ";
+    int id;
+    cin >> id;
+    if (!linkedlist->idExists(id)){
+        cout << "I couldn't find the ID :(" << endl;
+        return;
+    }
+    linkedlist->remove(linkedlist->getHead(), NULL, id);
+    cout << "Deleted!" << endl;
+}
+
+void averageStudent(LinkedList* linkedlist){
+    if(linkedlist->getSize() == NULL){
+        cout << "List is empty :(" << endl;
+        return;
+    }
+    float* avg = linkedlist->getAverageGpa();
+    cout << "Average GPA of Students: " << *avg << endl;
+    delete avg;
 }

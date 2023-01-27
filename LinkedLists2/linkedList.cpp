@@ -10,11 +10,11 @@ LinkedList::LinkedList(){
 }
 
 LinkedList::~LinkedList(){
-    Node* currentNode = head;
-    while(currentNode != NULL){
+    Node* cur = head;
+    while(cur != NULL){
         Node *temp = cur->getNext();
-        delete current;
-        current = temp;
+        delete cur;
+        cur = temp;
     }  
 }
 
@@ -95,7 +95,7 @@ bool LinkedList:: idExists(int id){
 void LinkedList::getAverageGpa(Node* cur, float* gpaSum){
     if(cur == NULL)
         return;
-    (*sum) += cur->getStudent()->gpa;
+    (*gpaSum) += cur->getStudent()->gpa;
     this->getAverageGpa(cur->getNext(), gpaSum);
 }
 
@@ -103,14 +103,14 @@ float* LinkedList::getAverageGpa(){
     float* gpaSum = new float(0);
     Node* cur = this->head;
     this->getAverageGpa(cur, gpaSum);
-    (*sum) /= this->size;
-    return sum;
+    (*gpaSum) /= this->size;
+    return gpaSum;
 }
 
 void LinkedList::printNode(Node* cur){
     if(cur == NULL)
         return;
-    cout << "Student Name: " << currentNode->getStudent()->firstName << " " << currentNode->getStudent()->lastName << "\nID: " << currentNode->getStudent()->id << "\nGPA: " << currentNode->getStudent()->gpa << endl;
+    cout << "Student Name: " << cur->getStudent()->firstName << " " << cur->getStudent()->lastName << "   ID: " << cur->getStudent()->id << "   GPA: " << cur->getStudent()->gpa << endl;
     this->printNode(cur->getNext());
 }
 

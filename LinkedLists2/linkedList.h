@@ -9,10 +9,7 @@ class LinkedList{
   private:
     Node *head;
     int size;
-    void printNode(Node *cur);
     void getAverageGpa(Node *cur, float *gpaSum);
-    void add(Node *cur, Node *prev, Student *newStudent, bool isHead);
-    void remove(Node *cur, Node *prev, int id);
 
   public:
     LinkedList();
@@ -20,7 +17,9 @@ class LinkedList{
 
     bool idExists(int id);
     float *getAverageGpa();
-    void printList();
+    void add(Node *cur, Node *prev, Student *newStudent, bool isHead);
+    void remove(Node *cur, Node *prev, int id);
+    void printNode(Node *cur);
     int getSize();
     Node *getHead();
 };

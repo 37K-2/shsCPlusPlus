@@ -9,7 +9,7 @@ LinkedList::LinkedList(){
     this->size = 0;
 }
 
-LinkedList::~LinkedList(){
+LinkedList::~LinkedList(){ // current = head, loop and delete cur
     Node* cur = head;
     while(cur != NULL){
         Node *temp = cur->getNext();
@@ -19,7 +19,7 @@ LinkedList::~LinkedList(){
 }
 
 void LinkedList::add(Node *cur, Node* prev, Student *newStudent, bool isHead){
-    if (cur == NULL && isHead) {  // 0 elements in list
+    if (cur == NULL && isHead) {  // 0 elements in list then none
         this->head = new Node(newStudent);
         this->size = 1;
         return;
@@ -31,7 +31,7 @@ void LinkedList::add(Node *cur, Node* prev, Student *newStudent, bool isHead){
                 prev->setNext(nodePointer);
             else
                 this->head = nodePointer;
-            nodePointer->setNext(cur);
+            nodePointer->setNext(cur); //add student + increase size
             this->size++;
         }
         else{
@@ -46,23 +46,23 @@ void LinkedList::add(Node *cur, Node* prev, Student *newStudent, bool isHead){
             prev->setNext(nodePointer);
         else
             this->head = nodePointer;
-        nodePointer->setNext(cur);
+        nodePointer->setNext(cur); //basically the same code as above
         this->size++;
     }
     else{
-        this->add(cur->getNext(), cur, newStudent, false);
+        this->add(cur->getNext(), cur, newStudent, false); //recursive
     }
 
 }
 
-void LinkedList::remove(Node* cur, Node* prev, int id){
+void LinkedList::remove(Node* cur, Node* prev, int id){ //same thing as add but uses destructor/delete to remove
     if(cur == NULL)
         return;
     if(cur->getStudent()->id == id){
         Node *next = cur->getNext();
         if(prev != NULL && next != NULL){
             delete cur;
-            prev->setNext(next);
+            prev->setNext(next); 
             this->size--;
         }
         else{
@@ -82,7 +82,7 @@ void LinkedList::remove(Node* cur, Node* prev, int id){
     this->remove(cur->getNext(), cur, id);
 }
 
-bool LinkedList:: idExists(int id){
+bool LinkedList:: idExists(int id){ //check if id exists via looping and checking each node
     Node* cur = this->head;
     while(cur != NULL){
         if(cur->getStudent()->id == id)
@@ -92,7 +92,7 @@ bool LinkedList:: idExists(int id){
     return false;
 }
 
-void LinkedList::getAverageGpa(Node* cur, float* gpaSum){
+void LinkedList::getAverageGpa(Node* cur, float* gpaSum){ //find the average gpa
     if(cur == NULL)
         return;
     (*gpaSum) += cur->getStudent()->gpa;
@@ -107,7 +107,7 @@ float* LinkedList::getAverageGpa(){
     return gpaSum;
 }
 
-void LinkedList::printNode(Node* cur){
+void LinkedList::printNode(Node* cur){ //print function
     if(cur == NULL)
         return;
     cout << "Student Name: " << cur->getStudent()->firstName << " " << cur->getStudent()->lastName << "   ID: " << cur->getStudent()->id << "   GPA: " << cur->getStudent()->gpa << endl;

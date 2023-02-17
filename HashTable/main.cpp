@@ -17,10 +17,10 @@ const char AVG[] = "AVERAGE";
 const char RANDOM[] = "RANDOM";
 
 //function prototypes
-void addStudent(Node** array, int arrSize, int** collisionCount);
+void addStudent(Node** &array, int &arrSize);
 //void deleteStudent(Node** array, int arrSize, int** collisionCount);
 //void averageStudent(Node** array, int arrSize);
-void rehash(Node** array, int arrSize, int** collisionCount);
+void rehash(Node** &array, int &arrSize);
 int hashFunc(int id, int arraySize);
 
 int main(){
@@ -29,10 +29,12 @@ int main(){
     for (int x = 0; x<arrSize; x++){
         array[x] = nullptr;
     }
+    /*
     int** collisionCount = new int*[arrSize];
     for (int x = 0; x<arrSize; x++){
         collisionCount[x] = 0;
     }
+    */
 
     cout << "Student List C++ (Hash Table Version)" << endl;
     cout << fixed << setprecision(2); //set to hundredths
@@ -44,7 +46,7 @@ int main(){
         cout << "-> ";
         cin >> cmd;
         if(strcmp(cmd, ADD) == 0) //add something to list
-            addStudent(array, arrSize, collisionCount);
+            addStudent(array, arrSize);
         if(strcmp(cmd, PRINT) == 0) { //printing the list
             for(int x=0; x<arrSize; x++){
                 if(array[x] != NULL){
@@ -76,8 +78,9 @@ int main(){
     return 0;
 }
 
-void addStudent(Node** array, int arrSize, int** collisionCount){
+void addStudent(Node** &array, int &arrSize){
     Student* student = new Student();
+    int collisionCount = 0;
     
     cout << "First Name: "; //inputs
     cin >> student->firstName;
@@ -90,30 +93,73 @@ void addStudent(Node** array, int arrSize, int** collisionCount){
 
     int hashedNum = hashFunc(student->id, arrSize);
     
-    if (array[hashedNum] == NULL && collisionCount[hashedNum] == 0){
+    if (array[hashedNum] == NULL){
         array[hashedNum] = new Node(student);
-        collisionCount[hashedNum]++;
     }
     else{
+        collisionCount++;
         Node* newStudent = new Node(student);
         Node* next = array[hashedNum];
         while (next->getNext() != NULL){
             next = next->getNext();
+            collisionCount++;
         }
         next->setNext(newStudent);
-        collisionCount[hashedNum]++;
     }
     //function to rehash if collisionCount > 3
+    //cout << collisionCount << endl;
+    if(collisionCount >= 3)
+        rehash(array, arrSize);
     
     cout << "Added Student" << endl;
 }
 
-void rehash(Node** oldArray, int oldArrSize, int** oldCollisionCount){
-    int newSize = oldArrSize*2;
-    Node** newArray = new Node*[newSize];
-    for (int x = 0; x<newSize; x++){
+void rehash(Node** &oldArray, int &oldArrSize){
+    cout << "Rehashing..." << endl;
+    int newArrSize = oldArrSize*2;
+    Node** newArray = new Node*[newArrSize];
+    int collisionCount = 0;
+    for (int x = 0; x<newArrSize; x++){
         newArray[x] = nullptr;
     }
+
+    for(int x = 0; x<oldArrSize; x++){
+        if(oldArray[x] != NULL){
+            Node* next = oldArray[x];
+            while(next != NULL){
+                //cout << "hi" << endl;
+                Student* student = new Student();
+                strcpy(student->firstName, next->getStudent()->firstName);
+                strcpy(student->lastName, next->getStudent()->lastName);
+                student->id = next->getStudent()->id;
+                student->gpa = next->getStudent()->gpa;
+
+                int newHashedNum = hashFunc(student->id, newArrSize);
+
+                if (newArray[newHashedNum] == NULL){
+                    newArray[newHashedNum] = new Node(student);
+                }
+                else{
+                    collisionCount++;
+                    Node* newStudent = new Node(student);
+                    Node* next2 = newArray[newHashedNum];
+                    while (next2->getNext() != NULL){
+                        next2 = next2->getNext();
+                        collisionCount++;
+                    }
+                    next2->setNext(newStudent);
+                }
+                next = next->getNext();
+            }
+        }
+    }
+
+    oldArray = newArray;
+    oldArrSize = newArrSize;
+
+    //if(collisionCount >= 3)
+        //rehash(oldArray, oldArrSize);
+
 }
 
 /*

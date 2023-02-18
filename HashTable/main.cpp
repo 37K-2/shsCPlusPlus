@@ -58,7 +58,7 @@ int main(){
         if(strcmp(cmd, DELETE) == 0) //delete something from list
             deleteStudent(array, arrSize);
         if(strcmp(cmd, QUIT) == 0){ //quit function
-            cout << "TEEHEE" << endl;
+            cout << "TEEHEE test" << endl;
             break;
         }
     }

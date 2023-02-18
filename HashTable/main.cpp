@@ -41,10 +41,10 @@ int main(){
             addStudent(array, arrSize);
         if(strcmp(cmd, PRINT) == 0) { //printing the list
             for(int x=0; x<arrSize; x++){
-                if(array[x] != NULL){
+                if(array[x] != nullptr){
                     cout << "Hashed ID: " << x << endl;
                     Node* next = array[x];
-                    while(next != NULL){
+                    while(next != nullptr){
                         cout << "Unhashed ID: " << next->getStudent()->id << endl;
                         cout << "   Name: " << next->getStudent()->firstName << " " << next->getStudent()->lastName << endl;
                         cout << "   GPA: " << next->getStudent()->gpa << endl;
@@ -79,22 +79,19 @@ void addStudent(Node** &array, int &arrSize){
 
     int hashedNum = hashFunc(student->id, arrSize);
     
-    if (array[hashedNum] == NULL){
+    if (array[hashedNum] == nullptr)
         array[hashedNum] = new Node(student);
-        cout << "e" << array[hashedNum]->getStudent()->id << endl;
-    }
     else{
         collisionCount++;
         Node* newStudent = new Node(student);
         Node* next = array[hashedNum];
-        while (next->getNext() != NULL){
+        while (next->getNext() != nullptr){
             next = next->getNext();
             collisionCount++;
         }
         next->setNext(newStudent);
     }
     //function to rehash if collisionCount > 3
-    //cout << collisionCount << endl;
     if(collisionCount >= 3)
         rehash(array, arrSize);
     
@@ -111,9 +108,9 @@ void rehash(Node** &oldArray, int &oldArrSize){
     }
 
     for(int x = 0; x<oldArrSize; x++){
-        if(oldArray[x] != NULL){
+        if(oldArray[x] != nullptr){
             Node* next = oldArray[x];
-            while(next != NULL){
+            while(next != nullptr){
                 //cout << "hi" << endl;
                 Student* student = new Student();
                 strcpy(student->firstName, next->getStudent()->firstName);
@@ -123,15 +120,13 @@ void rehash(Node** &oldArray, int &oldArrSize){
 
                 int newHashedNum = hashFunc(student->id, newArrSize);
 
-                if (newArray[newHashedNum] == NULL){
+                if (newArray[newHashedNum] == nullptr)
                     newArray[newHashedNum] = new Node(student);
-                    cout << "D" << next->getStudent()->id << endl;
-                }
                 else{
                     collisionCount++;
                     Node* newStudent = new Node(student);
                     Node* next2 = newArray[newHashedNum];
-                    while (next2->getNext() != NULL){
+                    while (next2->getNext() != nullptr){
                         next2 = next2->getNext();
                         collisionCount++;
                     }
@@ -159,42 +154,30 @@ void deleteStudent(Node** &array, int &arrSize){
 
     Node* previous = nullptr;
     Node* current = array[hashedNum];
-    Node* head = array[hashedNum];
-
-    //cout << current->getStudent()->id << endl;
-
-    if(head == nullptr){
-        cout << "ID does not exist." << endl;
-        return;
-    }
-    else{
-        cout << "A" << current->getStudent()->id << endl;
-        while(current != nullptr){
-            cout << "b" << current->getStudent()->id << endl;
-            if(current->getStudent()->id == id){
-                Node* next = current->getNext();
-                if(previous != nullptr && next != nullptr){
-                    delete current;
-                    previous->setNext(next);
-                }
-                else{
-                    if(previous == nullptr){
-                        head = next;
-                        array[hashedNum] = head;
-                        delete current;
-                    }
-                    else if(next == nullptr){
-                        //cout << "oof" <<endl;
-                        previous->setNext(nullptr);
-                        delete current;
-                    }
-                }
+    bool firstItr = true;
+    
+    while(current != nullptr){
+        if(current->getStudent()->id == id){
+            if(firstItr){
+                Node* temp = current->getNext();
+                delete current;
+                array[hashedNum] = temp;
+                cout << "Deleted!" << endl;
+                return;
             }
-            previous = current;
-            current = current->getNext();
+            else{
+                previous->setNext(current->getNext());
+                delete current;
+                array[hashedNum] = previous;
+                cout << "Deleted!" << endl;
+                return;
+            }
         }
-        cout << "Deleted!" << endl;
+        firstItr = false;
+        previous = current;
+        current = current->getNext();
     }
+    cout << "ID doesn't exist. :(" << endl;
 }
 
 int hashFunc(int id, int arraySize){

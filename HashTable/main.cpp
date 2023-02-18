@@ -20,6 +20,7 @@ void addStudent(Node** &array, int &arrSize);
 void deleteStudent(Node** &array, int &arrSize);
 void rehash(Node** &array, int &arrSize);
 int hashFunc(int id, int arraySize);
+bool idExists(int id, Node** &array, int arrSize);
 
 int main(){
     int arrSize = 128;
@@ -67,13 +68,20 @@ int main(){
 void addStudent(Node** &array, int &arrSize){
     Student* student = new Student();
     int collisionCount = 0;
+    int id = -1;
     
     cout << "First Name: "; //inputs
     cin >> student->firstName;
     cout << "Last Name: ";
     cin >> student->lastName;
     cout << "ID: ";
-    cin >> student->id;
+    cin >> id;
+    while(idExists(id, array, arrSize)){
+        cout << "ID is already used!" << endl;
+        cout << "ID: ";
+        cin >> id;
+    }
+    student->id = id;
     cout << "GPA: ";
     cin >> student->gpa;
 
@@ -183,4 +191,20 @@ void deleteStudent(Node** &array, int &arrSize){
 int hashFunc(int id, int arraySize){
     //cout << id%arraySize << endl;
     return id%arraySize;
+}
+
+bool idExists(int id, Node** &array, int arrSize){
+    bool exists = false;
+    for(int x=0; x<arrSize; x++){
+        if(array[x] != nullptr){
+            Node* next = array[x];
+            while(next != nullptr){
+                if(id == next->getStudent()->id)
+                    exists = true;
+                next = next->getNext();
+            }
+        }
+    }
+    //cout << exists << endl;
+    return exists;
 }

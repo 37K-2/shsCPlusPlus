@@ -4,7 +4,6 @@
 #include <cstring>
 #include <iomanip>
 #include "node.h"
-//#include "linkedList.h"
 #include "student.h"
 using namespace std;
 
@@ -18,8 +17,7 @@ const char RANDOM[] = "RANDOM";
 
 //function prototypes
 void addStudent(Node** &array, int &arrSize);
-//void deleteStudent(Node** array, int arrSize, int** collisionCount);
-//void averageStudent(Node** array, int arrSize);
+void deleteStudent(Node** &array, int &arrSize);
 void rehash(Node** &array, int &arrSize);
 int hashFunc(int id, int arraySize);
 
@@ -29,12 +27,6 @@ int main(){
     for (int x = 0; x<arrSize; x++){
         array[x] = nullptr;
     }
-    /*
-    int** collisionCount = new int*[arrSize];
-    for (int x = 0; x<arrSize; x++){
-        collisionCount[x] = 0;
-    }
-    */
 
     cout << "Student List C++ (Hash Table Version)" << endl;
     cout << fixed << setprecision(2); //set to hundredths
@@ -62,17 +54,12 @@ int main(){
                 }
             }
         }
-        /*
         if(strcmp(cmd, DELETE) == 0) //delete something from list
-            deleteStudent(linkedlist);
-        if(strcmp(cmd, AVG) == 0) //avg values (gpa) from list
-            averageStudent(linkedlist);
+            deleteStudent(array, arrSize);
         if(strcmp(cmd, QUIT) == 0){ //quit function
             cout << "TEEHEE" << endl;
-            delete linkedlist;
             break;
         }
-        */
     }
     return 0;
 }
@@ -94,6 +81,7 @@ void addStudent(Node** &array, int &arrSize){
     
     if (array[hashedNum] == NULL){
         array[hashedNum] = new Node(student);
+        cout << "e" << array[hashedNum]->getStudent()->id << endl;
     }
     else{
         collisionCount++;
@@ -137,6 +125,7 @@ void rehash(Node** &oldArray, int &oldArrSize){
 
                 if (newArray[newHashedNum] == NULL){
                     newArray[newHashedNum] = new Node(student);
+                    cout << "D" << next->getStudent()->id << endl;
                 }
                 else{
                     collisionCount++;
@@ -162,34 +151,52 @@ void rehash(Node** &oldArray, int &oldArrSize){
         rehash(oldArray, oldArrSize);
 }
 
-/*
-void deleteStudent(LinkedList* linkedlist){
-    cin.ignore();
-    if(linkedlist->getSize() == 0){ // check if list is empty
-        cout << "List is empty :(" << endl;
-        return;
-    }
-    cout << "Enter ID to delete: ";
+void deleteStudent(Node** &array, int &arrSize){
     int id;
+    cout << "Enter ID to delete: " << endl;
     cin >> id;
-    if (!linkedlist->idExists(id)){ //if id doesnt exist then print couldnt find id
-        cout << "I couldn't find the ID :(" << endl;
+    int hashedNum = hashFunc(id, arrSize);
+
+    Node* previous = nullptr;
+    Node* current = array[hashedNum];
+    Node* head = array[hashedNum];
+
+    //cout << current->getStudent()->id << endl;
+
+    if(head == nullptr){
+        cout << "ID does not exist." << endl;
         return;
     }
-    linkedlist->remove(linkedlist->getHead(), NULL, id); //remove student
-    cout << "Deleted!" << endl;
+    else{
+        cout << "A" << current->getStudent()->id << endl;
+        while(current != nullptr){
+            cout << "b" << current->getStudent()->id << endl;
+            if(current->getStudent()->id == id){
+                Node* next = current->getNext();
+                if(previous != nullptr && next != nullptr){
+                    delete current;
+                    previous->setNext(next);
+                }
+                else{
+                    if(previous == nullptr){
+                        head = next;
+                        array[hashedNum] = head;
+                        delete current;
+                    }
+                    else if(next == nullptr){
+                        //cout << "oof" <<endl;
+                        previous->setNext(nullptr);
+                        delete current;
+                    }
+                }
+            }
+            previous = current;
+            current = current->getNext();
+        }
+        cout << "Deleted!" << endl;
+    }
 }
 
-void averageStudent(LinkedList* linkedlist){ //find average gpa of students
-    if(linkedlist->getSize() == 0){ //if size of linked list is 0 then list is empty (no gpa)
-        cout << "List is empty :(" << endl;
-        return;
-    }
-    float* avg = linkedlist->getAverageGpa(); //gpa of students
-    cout << "Average GPA of Students: " << *avg << endl;
-    delete avg;
-}
-*/
 int hashFunc(int id, int arraySize){
     //cout << id%arraySize << endl;
     return id%arraySize;

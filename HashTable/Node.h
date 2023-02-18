@@ -10,9 +10,8 @@ class Node {
   ~Node();
   Node* getNext();
   Student* getStudent();
-  void setNext(Node* newnext);
+  void setNext(Node* newNext);
   Node* next; 
   Student* student;
-
 };
 #endif

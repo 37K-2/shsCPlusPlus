@@ -42,7 +42,7 @@ int main(){
     char cmd[8]; //command
 
     while(true){
-        cout << "Type 'ADD', 'PRINT', 'DELETE', 'AVERAGE', 'RANDOM', 'QUIT': " << endl;
+        cout << "Type 'ADD', 'PRINT', 'DELETE', 'RANDOM', 'QUIT': " << endl;
         cout << "-> ";
         cin >> cmd;
         if(strcmp(cmd, ADD) == 0) //add something to list
@@ -54,8 +54,7 @@ int main(){
                     Node* next = array[x];
                     while(next != NULL){
                         cout << "Unhashed ID: " << next->getStudent()->id << endl;
-                        cout << "   First Name: " << next->getStudent()->firstName << endl;
-                        cout << "   Last Name: " << next->getStudent()->lastName << endl;
+                        cout << "   Name: " << next->getStudent()->firstName << " " << next->getStudent()->lastName << endl;
                         cout << "   GPA: " << next->getStudent()->gpa << endl;
                         next = next->getNext();
                     }
@@ -157,9 +156,10 @@ void rehash(Node** &oldArray, int &oldArrSize){
     oldArray = newArray;
     oldArrSize = newArrSize;
 
-    //if(collisionCount >= 3)
-        //rehash(oldArray, oldArrSize);
+    cout << "Finished Rehashing" << endl;
 
+    if(collisionCount >= 3)
+        rehash(oldArray, oldArrSize);
 }
 
 /*

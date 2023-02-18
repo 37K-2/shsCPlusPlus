@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cstring>
 #include <iomanip>
+#include <fstream>
+#include <vector>
 #include "node.h"
 #include "student.h"
 using namespace std;
@@ -19,6 +21,7 @@ const char RANDOM[] = "RANDOM";
 void addStudent(Node** &array, int &arrSize);
 void deleteStudent(Node** &array, int &arrSize);
 void rehash(Node** &array, int &arrSize);
+void randomGenerate(Node** &array, int arrSize);
 int hashFunc(int id, int arraySize);
 bool idExists(int id, Node** &array, int arrSize);
 
@@ -57,8 +60,10 @@ int main(){
         }
         if(strcmp(cmd, DELETE) == 0) //delete something from list
             deleteStudent(array, arrSize);
+        if(strcmp(cmd, RANDOM) == 0)
+            randomGenerate(array, arrSize);
         if(strcmp(cmd, QUIT) == 0){ //quit function
-            cout << "TEEHEE test" << endl;
+            cout << "TEEHEE" << endl;
             break;
         }
     }
@@ -102,6 +107,7 @@ void addStudent(Node** &array, int &arrSize){
     //function to rehash if collisionCount > 3
     if(collisionCount >= 3)
         rehash(array, arrSize);
+    collisionCount = 0;
     
     cout << "Added Student" << endl;
 }
@@ -148,8 +154,24 @@ void rehash(Node** &oldArray, int &oldArrSize){
     oldArray = newArray;
     oldArrSize = newArrSize;
 
-    cout << "Finished Rehashing" << endl;
+    /*
+    for(int x=0; x<oldArrSize; x++){
+        if(oldArray[x] != nullptr){
+            cout << "Hashed ID: " << x << endl;
+            Node* next = oldArray[x];
+            while(next != nullptr){
+                cout << "Unhashed ID: " << next->getStudent()->id << endl;
+                cout << "   Name: " << next->getStudent()->firstName << " " << next->getStudent()->lastName << endl;
+                cout << "   GPA: " << next->getStudent()->gpa << endl;
+                next = next->getNext();
+            }
+            cout << endl;
+        }
+    }
+    */
 
+    cout << "Finished Rehashing" << endl;
+    //return;
     if(collisionCount >= 3)
         rehash(oldArray, oldArrSize);
 }
@@ -186,6 +208,84 @@ void deleteStudent(Node** &array, int &arrSize){
         current = current->getNext();
     }
     cout << "ID doesn't exist. :(" << endl;
+}
+
+void randomGenerate(Node** &array, int arrSize){
+    int studentNum = 0;
+    cout << "Number of Students to Generate: ";
+    cin >> studentNum;
+
+    vector<char*> firstNames, lastNames;
+    int firstNamesCount, lastNamesCount;
+
+    ifstream firstNamesFile("firstNames.txt");
+    if(firstNamesFile.is_open()){
+        char temp[31];
+        while(!firstNamesFile.eof()){  
+            firstNamesFile >> temp;
+            firstNames.push_back(new char[31]); 
+            cout << firstNames[firstNamesCount] << temp <<endl;
+            strcpy(firstNames[firstNamesCount], temp);
+            firstNamesCount++;
+        }
+        firstNamesFile.close();
+    }
+    cout << "B" << endl;
+    ifstream lastNamesFile("lastNames.txt");
+    if(lastNamesFile.is_open()){
+        char temp[31];
+        while(!lastNamesFile.eof()){   
+            lastNamesFile >> temp;
+            lastNames.push_back(new char[31]);
+            strcpy(lastNames[lastNamesCount], temp);
+            lastNamesCount++;
+        }
+        lastNamesFile.close();
+    }
+
+    srand(time(0));
+    int id = 0;
+    int collisionCount = 0;
+
+    for(int x=0; x<studentNum; x++){
+        Student* student = new Student();
+
+        int randomFirstName = rand() % 1000;
+        strcpy(student->firstName, firstNames[randomFirstName]);
+        int randomLastName = rand() % 1000;
+        strcpy(student->lastName, firstNames[randomLastName]);
+
+        while(true){
+            if(idExists(id, array, arrSize))
+                id++;
+            else
+                break;
+        }
+        student->id = id;
+        student->gpa = (double)(rand()%500)/100;
+
+        int hashedNum = hashFunc(student->id, arrSize);
+    
+        if (array[hashedNum] == nullptr)
+            array[hashedNum] = new Node(student);
+        else{
+            collisionCount++;
+            Node* newStudent = new Node(student);
+            Node* next = array[hashedNum];
+            while (next->getNext() != nullptr){
+                next = next->getNext();
+                collisionCount++;
+            }
+            next->setNext(newStudent);
+        }
+        //function to rehash if collisionCount > 3
+        if(collisionCount >= 3)
+            rehash(array, arrSize);
+        collisionCount = 0;
+    }
+    
+    cout << "Generated " << studentNum << " Students." << endl;
+
 }
 
 int hashFunc(int id, int arraySize){

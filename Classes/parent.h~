@@ -1,0 +1,17 @@
+#include <iostream>
+using namespace std;
+
+class parent {
+ public:
+  parent();
+
+  void setTitle();
+  void setYear();
+  int getYear();
+  char* getTitle();
+ protected:
+  int id;
+  char* title;
+  int year; 
+  
+}

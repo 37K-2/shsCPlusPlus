@@ -22,6 +22,9 @@ struct treeNode{
 };
 
 template <class K>
-struct 
+linkedListNode <K>::linkedListNode<K info> {
+  this->next = nullptr;
+  this->info = info;
+};
 
 #endif

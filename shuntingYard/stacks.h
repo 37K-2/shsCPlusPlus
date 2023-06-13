@@ -5,7 +5,7 @@
 
 class nodeStack {
     private:
-        llNode<char> *top;
+        linkedListNode<char> *top;
 
     public:
         nodeStack();
@@ -19,7 +19,7 @@ class nodeStack {
 
 class expressionStack {
     private:
-        llNode<treeNode<char> *> *top;
+        linkedListNode<treeNode<char> *> *top;
 
     public:
         expressionStack();

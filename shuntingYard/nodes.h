@@ -2,11 +2,11 @@
 #define NODES_H
 
 template <class C>
-struct llNode {
-    llNode *next;
+struct linkedListNode {
+    linkedListNode *next;
     C data;
 
-    llNode(C);
+    linkedListNode(C);
 };
 
 template <class C>
@@ -25,7 +25,7 @@ struct treeNode {
 // implement
 
 template <class C>
-llNode<C>::llNode(C data) {
+linkedListNode<C>::linkedListNode(C data) {
     this->next = nullptr;
     this->data = data;
 }

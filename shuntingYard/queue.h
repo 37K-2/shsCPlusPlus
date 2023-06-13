@@ -8,8 +8,8 @@ using namespace std;
 
 class outputQueue {
     private:
-        llNode<char>* front;
-        llNode<char>* rear;
+        linkedListNode<char>* front;
+        linkedListNode<char>* rear;
     public:
         outputQueue();
         ~outputQueue();

@@ -5,9 +5,9 @@ nodeStack::nodeStack() {
 
 nodeStack::~nodeStack()
 {
-    llNode<char> *current = top;
+    linkedListNode<char> *current = top;
     while (current != nullptr) {
-        llNode<char> *temp = current->next;
+        linkedListNode<char> *temp = current->next;
         delete current;
         current = temp;
     }
@@ -19,7 +19,7 @@ bool nodeStack::empty() {
 }
 
 void nodeStack::push(char data) {
-    llNode<char> *node = new llNode<char>(data);
+    linkedListNode<char> *node = new linkedListNode<char>(data);
 
     if (empty())
         top = node;
@@ -34,7 +34,7 @@ char nodeStack::pop() {
         return '\0';
 
     char data = top->data;
-    llNode<char> *temp = top;
+    linkedListNode<char> *temp = top;
     top = top->next;
     delete temp;
     return data;
@@ -53,9 +53,9 @@ expressionStack::expressionStack()
 
 expressionStack::~expressionStack()
 {
-    llNode<treeNode<char> *> *current = top;
+    linkedListNode<treeNode<char> *> *current = top;
     while (current != nullptr) {
-        llNode<treeNode<char> *> *temp = current->next;
+        linkedListNode<treeNode<char> *> *temp = current->next;
         delete current;
         current = temp;
     }
@@ -67,7 +67,7 @@ bool expressionStack::empty() {
 }
 
 void expressionStack::push(treeNode<char> *data) {
-    llNode<treeNode<char> *> *node = new llNode<treeNode<char> *>(data);
+    linkedListNode<treeNode<char> *> *node = new linkedListNode<treeNode<char> *>(data);
 
     if (empty())
         top = node;
@@ -83,7 +83,7 @@ treeNode<char> *expressionStack::pop()
         return nullptr;
 
     treeNode<char> *data = top->data;
-    llNode<treeNode<char> *> *temp = top;
+    linkedListNode<treeNode<char> *> *temp = top;
     top = top->next;
     delete temp;
     return data;

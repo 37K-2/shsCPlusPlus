@@ -7,9 +7,9 @@ outputQueue::outputQueue() {
 }
 
 outputQueue::~outputQueue() {
-    llNode<char> *current = front;
+    linkedListNode<char> *current = front;
     while (current != nullptr) {
-        llNode<char> *temp = current->next;
+        linkedListNode<char> *temp = current->next;
         delete current;
         current = temp;
     }
@@ -22,7 +22,7 @@ bool outputQueue::empty() {
 }
 
 void outputQueue::enqueue(char data) {
-    llNode<char> *node = new llNode<char>(data);
+    linkedListNode<char> *node = new linkedListNode<char>(data);
 
     if (empty())
         this->front = rear = node;
@@ -37,7 +37,7 @@ char outputQueue::dequeue() {
         return '\0';
 
     char data = front->data;
-    llNode<char> *temp = front;
+    linkedListNode<char> *temp = front;
 
     if (front == rear)
         front = rear = nullptr;

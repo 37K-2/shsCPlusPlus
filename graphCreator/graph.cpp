@@ -48,14 +48,14 @@ bool graph::add(node* node_) {
     return true;
 }
 
-// Remove a node with the given label from the graph
+// remove node with the given label from the graph
 bool graph::remove(char* label) {
-    // Find the correct node in the list
+    // find the node
     vector<node*>::iterator foundNode;
     for (foundNode = this->nodes.begin(); foundNode != this->nodes.end(); foundNode++) {
-        // We found the correct node
+        // got the node
         if (strcmp((*foundNode)->label, label) == 0) {
-            // Iterate through all connections that are part of our found node
+            // iterate through the node
             vector<edge*>::iterator connection;
             for (connection = (*foundNode)->connections.begin(); connection != (*foundNode)->connections.end(); connection++) {
                 node* end = (*connection)->end;
@@ -72,12 +72,12 @@ bool graph::remove(char* label) {
     return false;
 }
 
-// Remove a connection between two nodes in the graph.  This does not remove the nodes.
+// remove a connection between two nodes in the graph (does not remove nodes)
 bool graph::removeConnection(node* first, node* second) {
     bool removed = false;
-    // We have to iterate through the connections for both nodes, as the connection could start at either one
+    // iterate through the connections for both nodes, since the connection could start at either one
 
-    // Iterate through the connections for the first node...
+    // interate through connections of the first node
     vector<edge*>::iterator it1;
     for (it1 = first->connections.begin(); it1 != first->connections.end(); it1++) {
         if ((*it1)->end == second) {
@@ -88,7 +88,7 @@ bool graph::removeConnection(node* first, node* second) {
         }
     }
 
-    // And then interate through the connections for the second node
+    // iterate through connections of the second node
     vector<edge*>::iterator it2;
     for (it2 = second->connections.begin(); it2 != second->connections.end(); it2++) {
         if ((*it2)->end == first) {
@@ -101,7 +101,7 @@ bool graph::removeConnection(node* first, node* second) {
     return removed;
 }
 
-// Find a node with the given label
+// find node with the label
 node* graph::find(char* label) {
     vector<node*>::iterator it;
     for (it = this->nodes.begin(); it != this->nodes.end(); it++) {
@@ -111,28 +111,10 @@ node* graph::find(char* label) {
     return nullptr;
 }
 
-/*
-    Print out the adjacency matrix.
-    An adjacency matrix shows which nodes are connected to which nodes.
-    ---
-    A sample adjacency matrix could be the following:
 
-      A B C D E
-    A 0 0 0 0 0
-    B X 0 0 0 0
-    C 0 X 0 0 0
-    D X X 0 0 0
-    E X 0 X 0 0
-
-    ---
-    An X indicates that two nodes are connected to each other.
-    An O indicates that two nodes are not connected to each other (imagine the O as an empty space).
-    In this adjacency matrix, nodes on the top row are connected to nodes on the side column.
-    For example, the X at (B, C) means that the node with a label of "B" is connected to the node with a label of "C".
-*/
-void graph::printAdjacencyMatrix() {
-    // Create the adjacency matrix
-    vector<vector<bool>> adjacencyMatrix(this->nodeCount, vector<bool>(this->nodeCount)); // Create a vector of this->nodeCount bool vectors (each size this->nodeCount)
+void graph::printAdjacencyMatrix() { //print adjacency matrix, to show which nodes are connected to which. X meaning that two nodes are connected, while O means they are not connected
+    // create adjacency matrix
+    vector<vector<bool>> adjacencyMatrix(this->nodeCount, vector<bool>(this->nodeCount)); //create a vector of this->nodeCount bool vectors (each size this->nodeCount)
     for (int i = 0; i < this->nodeCount; i++) {
         for (int j = 0; j < this->nodeCount; j++) {
             node* first = this->nodes[i];
@@ -151,7 +133,7 @@ void graph::printAdjacencyMatrix() {
                 continue;
             }
 
-            if (j == -1) { // Printing the top row of node labels
+            if (j == -1) { // print  top row of node labels
                 int len = strlen(this->nodes[i]->label);
                 int spacesCount = 3 - len;
                 if (len == 1)
@@ -162,7 +144,7 @@ void graph::printAdjacencyMatrix() {
                 continue;
             }
 
-            if (i == -1) // Printing the side column of node labels
+            if (i == -1) // print the side column of node labels
             {
                 int len = strlen(this->nodes[j]->label);
                 int spacesCount = 3 - len;
@@ -182,7 +164,7 @@ void graph::printAdjacencyMatrix() {
     }
 }
 
-// Get the index of a node that matches the label of the given node
+// get index of a node that matches the label of the given node
 int graph::indexOf(node* node_) {
     vector<node*>::iterator it;
     for (it = this->nodes.begin(); it != this->nodes.end(); it++) {
@@ -192,7 +174,7 @@ int graph::indexOf(node* node_) {
     return -1;
 }
 
-// Get the index of a node that matches the given label
+// get index of a node that matches the given label
 int graph::indexOf(char* label) {
     vector<node*>::iterator it;
     for (it = this->nodes.begin(); it != this->nodes.end(); it++) {
@@ -202,7 +184,7 @@ int graph::indexOf(char* label) {
     return -1;
 }
 
-// Get the index of the smallest unvisited node
+// get index of the smallest unvisited node
 int graph::minDistanceIndex(vector<float> distances, vector<bool> visited) {
     float minimum = INT_MAX;
     int index;
@@ -217,52 +199,46 @@ int graph::minDistanceIndex(vector<float> distances, vector<bool> visited) {
     return index;
 }
 
-/*
-    Use Djikstra's algorithm to find the shortest path from one node to another.
-
-    This function finds the same information as Graph::printAllPaths, but it will then use said information find a single shortest path.
-*/
+// Djikstra's algorithm (to find shortest path)
 void graph::printShortestPath(node* start, node* end) {
-    // Vectors for recording information generated by Djikstra's algorithm
+    // vectors for recording info from Djikstra's algorithm
     vector<float> distances;
     vector<bool> visited;
     vector<char*> previousNodes;
 
-    // Prepare the vectors
+    // prepare vectors
     for (int i = 0; i < this->nodeCount; i++) {
-        distances.push_back(INT_MAX); // Distances start at infinity (they're unknown)
-        visited.push_back(false); // Set all nodes to not visited
+        distances.push_back(INT_MAX); // distance at infinity (they're unknown)
+        visited.push_back(false); // set all nodes to "not visited"
         char lmao[1];
         strcpy(lmao, "");
-        previousNodes.push_back(lmao); // Set all of the previous nodes to nothing
+        previousNodes.push_back(lmao); // set all of the previous nodes to nothing
     }
 
     int startIndex = this->indexOf(start);
     int endIndex = this->indexOf(end);
 
-    distances[startIndex] = 0.0f; // The distance from a node to the same node should be 0...
+    distances[startIndex] = 0.0f; // distance from a node to itself should be 0
 
-    // We have to do this process for every node
+    // process for every node
     for (int i = 0; i < this->nodeCount; i++) {
-        int idx = this->minDistanceIndex(distances, visited); // Get the index of the smallest unvisited node
-        visited[idx] = true; // We've visited this node
+        int idx = this->minDistanceIndex(distances, visited); // get the index of the smallest unvisited node
+        visited[idx] = true; // visited node
 
-        // Iterate through all nodes again because we have to update shortest distances and previous nodes for each node in the list
+        // iterate through all nodes again to update shortest distances and previous nodes for each node in the list
         for (int j = 0; j < this->nodeCount; j++) {
-            /*
-                If the node "j" isn't visited,
-                the node "i" is connected to the node "j",
-                and the current minimum node added to the current node's connection's weight is smaller than the actual distance between nodes "i" and "j"
-            */
+            // if node "j" not visited and node "i" is connected to the node "j",
+            // current minimum node added to the current node's connection's weight is smaller than the actual distance between nodes "i" and "j"
+            
             if (!visited[j] && this->nodes[idx]->isConnectedTo(this->nodes[j]) && distances[idx] + this->nodes[idx]->getConnectionTo(this->nodes[j])->weight < distances[j]) {
-                // Update previous nodes
+                // update previous nodes
                 if (j == 0) {
                     char lmao[1];
                     strcpy(lmao, "");
                     previousNodes[j] = lmao;
                 } else
                     previousNodes[j] = this->nodes[idx]->label;
-                // Update shortest distances
+                // update shortest distances
                 distances[j] = distances[idx] + this->nodes[idx]->getConnectionTo(this->nodes[j])->weight;
             }
         }
@@ -271,68 +247,67 @@ void graph::printShortestPath(node* start, node* end) {
     node* current = end;
     vector<char*> path;
 
-    // Keep searching for a shortest path until we hit a distance of inifinity or our current node doesn't have a previous node
+    // continue searching forshortest path until we hit a distance of infinity, or current node doesn't have a previous node
     while (true) {
         int currentIndex = this->indexOf(current);
         float distance = distances[currentIndex];
-        if (distance == INT_MAX) // The distance is infinity, so that means there's no connection between our current node and its previous node
+        if (distance == INT_MAX) // distance is infinity -> no connection between our current node and its previous node
         {
             cout << "No valid path found between nodes \"" << start->label << "\" and \"" << end->label << "\"" << endl;
             return;
         }
-        path.push_back(current->label); // Add the current node to the path vector
+        path.push_back(current->label); // add the current node to the path vector
         char* previousLabel = previousNodes[currentIndex];
-        if (strcmp(previousLabel, "") == 0) // If the label of the current node's previous node is nonexistent, we've reached the end of the path!
+        if (strcmp(previousLabel, "") == 0) // if the label of the current node's previous node is nonexistent, then is at end of path
             break;
-        // Update the current node to be the current node's previous node
+        // update the current node to the current node's previous node
         int previousIndexOf = this->indexOf(previousLabel);
         current = this->nodes[previousIndexOf];
     }
 
-    // Print out the path in reverse, as nodes are added starting at the end of the path
+    // print out the path in reverse since nodes are added starting at the end of the path
     vector<char*>::reverse_iterator it;
     for (it = path.rbegin(); it != path.rend(); it++)
         cout << (*it) << " -> ";
     cout << "END" << endl;
 
-    // Print out the final path length
+    // print out the final path length
     cout << "Path length: " << distances[endIndex] << endl;
 }
 
-// Use Djikstra's algorithm to find the shortest path to each node from a given starting node
+// use Djikstra's algorithm to find the shortest path to each node from a given starting node
 void graph::printAllPaths(node* start) {
-    // Vectors for recording information generated by Djikstra's algorithm
+    // vectors for info from Djikstra's algorithm
     vector<float> distances;
     vector<bool> visited;
     vector<char*> previousNodes;
 
-    // Prepare the vectors
+    // prepare the vectors
     for (int i = 0; i < this->nodeCount; i++) {
-        distances.push_back(INT_MAX); // Distances start at infinity (they're unknown)
-        visited.push_back(false); // Set all nodes to not visited
+        distances.push_back(INT_MAX); // distances start at infinity (they're unknown)
+        visited.push_back(false); // set all nodes to not visited
         char lmao[1];
         strcpy(lmao, "");
-        previousNodes.push_back(lmao); // Set all of the previous nodes to nothing
+        previousNodes.push_back(lmao); // set all of the previous nodes to nothing
     }
 
     int startIndex = this->indexOf(start);
 
-    distances[startIndex] = 0.0f; // The distance from a node to the same node should be 0...
+    distances[startIndex] = 0.0f; // distance from a node to the same node should be 0
 
-    // We have to do this process for every node
+    // repeat for every node
     for (int i = 0; i < this->nodeCount; i++) {
-        int idx = this->minDistanceIndex(distances, visited); // Get the index of the smallest unvisited node
+        int idx = this->minDistanceIndex(distances, visited); // get the index of the smallest unvisited node
         visited[idx] = true; // We've visited this node
 
-        // Iterate through all nodes again because we have to update shortest distances and previous nodes for each node in the list
+        // iterate through all nodes again to update shortest distances and previous nodes for each node in list
         for (int j = 0; j < this->nodeCount; j++) {
             /*
-                If the node "j" isn't visited,
-                the node "i" is connected to the node "j",
-                and the current minimum node added to the current node's connection's weight is smaller than the actual distance between nodes "i" and "j"
+                if node "j" isn't visited and node "i" is connected to the node "j",
+                the current minimum node added to the current node's connection's weight is smaller than the actual distance between nodes "i" and "j"
             */
             if (!visited[j] && this->nodes[idx]->isConnectedTo(this->nodes[j]) && distances[idx] + this->nodes[idx]->getConnectionTo(this->nodes[j])->weight < distances[j]) {
-                // Update previous nodes
+                // update previous nodes
                 if (j == 0) {
                     char lmao[1];
                     strcpy(lmao, "");
@@ -340,13 +315,13 @@ void graph::printAllPaths(node* start) {
                 } else
                     previousNodes[j] = this->nodes[idx]->label;
 
-                // Update shortest distances
+                // update shortest distances
                 distances[j] = distances[idx] + this->nodes[idx]->getConnectionTo(this->nodes[j])->weight;
             }
         }
     }
 
-    // Print out all paths in a neat table
+    // print out all paths in a neat table
     cout << "Node    Distance from source node    Previous node" << endl;
     for (int i = 0; i < this->nodeCount; i++) {
         int len = strlen(this->nodes[i]->label);

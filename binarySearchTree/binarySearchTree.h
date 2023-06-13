@@ -1,12 +1,13 @@
-#ifndef BINARYSEARCHTREE_H
-#define BINARYSEARCHTREE_H
+#ifndef BST_H
+#define BST_H
+
 #include "node.h"
 
-class binarySearchTree{
+class BinarySearchTree {
  public:
-  binarySearchTree();
-  ~binarySearchTree();
-  void add (int data);
+  BinarySearchTree();
+  ~BinarySearchTree();
+  void add(int data);
   void remove(int data);
   bool search(int data);
   void display();
@@ -19,8 +20,9 @@ class binarySearchTree{
   bool search(Node *current, int data);
   void display(Node *current, bool left, int depth);
   Node *minValueNode(Node *current);
-  void destructor(Node *current);
+  void destruct(Node *current);
 };
 
-#endif
+#endif 
 
+// recreates bst. uses the node from node.h with the left and right in order to sort, left being < than parent and right being > than parent

@@ -1,7 +1,7 @@
 #include "node.h"
 
-Node::Node(int data){
+Node::Node(int data) {
   this->data = data;
-  this->left = left;
-  this->right = right;
+  this->left = nullptr;
+  this->right = nullptr;
 }

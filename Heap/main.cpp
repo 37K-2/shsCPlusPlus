@@ -35,7 +35,7 @@ int main()
         cin >> cmd;
 
         if (strcmp(cmd, cmdADD) == 0){
-            if (heap->isHeapFull())
+            if (heap->isHeapFull()) // heap is full
                 cout << "Heap is full." << endl;
             else{
                 cout << "MANUAL or FILE" << endl;
@@ -44,14 +44,14 @@ int main()
                 char opt[7];
                 cin >> opt;
 
-                if (strcmp(opt, addOptionMANUAL) == 0){
+                if (strcmp(opt, addOptionMANUAL) == 0){ //add stuff to heap
                     cout << "Enter integers seperated with space. Type \"DONE\" when finished." << endl;
 
                     char input[17];
                     char count = 0;
                     int skipped = 0;
                     while (true){
-                        if (heap->isHeapFull()){
+                        if (heap->isHeapFull()){ // heap is full
                             cout << "Heap is full." << endl;
                             break;
                         }
@@ -60,7 +60,7 @@ int main()
                             break;
                         int value;
                         sscanf(input, "%d", &value);
-                        if (value <= 0 || value > 1000)
+                        if (value <= 0 || value > 1000) // make sure numbers are between 0 and 999
                             skipped++;
                         else
                             heap->insert(value);
@@ -70,14 +70,14 @@ int main()
                         cout << skipped << " numbers were skipped due to not being between 1 and 1000." << endl;
                     cout << "Added " << (count - skipped) << " numbers." << endl;
                 }
-                if (strcmp(opt, addOptionFILE) == 0){
+                if (strcmp(opt, addOptionFILE) == 0){ // use file to read in the numbers
                     vector<int> numbers;
                     int numberCount = 0;
 
                     ifstream numbersFile("numbers.txt");
                     if (numbersFile.is_open()){
                         int val;
-                        while (!numbersFile.eof()){
+                        while (!numbersFile.eof()){ // read in file
                             numbersFile >> val;
                             numbers.push_back(val);
                             numberCount++;
@@ -104,7 +104,7 @@ int main()
                                 break;
                             }
 
-                            if (numbers[i] <= 0 || numbers[i] > 1000)
+                            if (numbers[i] <= 0 || numbers[i] > 1000) // add the numbers unless heap is full or not in between 0 and 999
                                 skipped++;
                             else
                                 heap->insert(numbers[i]);
@@ -122,7 +122,7 @@ int main()
             char opt[8];
             cin >> opt;
 
-            if (strcmp(opt, removeOptionMAX) == 0){
+            if (strcmp(opt, removeOptionMAX) == 0){ //removes the maximum num
                 int oldSize = heap->getHeapSize();
                 int oldMax = heap->extractMax();
                 int nwSize = heap->getHeapSize();
@@ -133,8 +133,7 @@ int main()
                 else
                     cout << "New heap size is zero, no new max value exists." << endl;
             }
-            if (strcmp(opt, removeOptionALL) == 0)
-            {
+            if (strcmp(opt, removeOptionALL) == 0){ // removes all from heap
                 int size = heap->getHeapSize();
                 cout << "Extracted numbers:" << endl;
                 while (heap->getHeapSize() != 0){
@@ -144,7 +143,7 @@ int main()
                 cout << size << " numbers were removed from the heap." << endl;
             }
         }
-        if (strcmp(cmd, cmdDisplay) == 0)
+        if (strcmp(cmd, cmdDisplay) == 0) // diaplay and quit
             heap->printHeap(0, 0);
         if (strcmp(cmd, cmdQUIT) == 0){
             delete heap;

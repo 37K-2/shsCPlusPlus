@@ -9,7 +9,7 @@ using namespace std;
 
 class redBlackTree {
 private:
-    vertex* root;
+    vertex* rootVertex;
     vertex* nullVertex;
     int size;
 

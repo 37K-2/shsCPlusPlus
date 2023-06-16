@@ -14,12 +14,12 @@ using namespace std;
 
 redBlackTree::redBlackTree() {
     this->nullVertex = new vertex();
-    this->root = this->nullVertex;
+    this->rootVertex = this->nullVertex;
     this->size = 0;
 }
 
 redBlackTree::~redBlackTree() { 
-    this->destruct(this->root); 
+    this->destruct(this->rootVertex); 
 }
 
 void redBlackTree::destruct(vertex* current) { // remove all the nodes in the tree
@@ -38,7 +38,7 @@ void redBlackTree::addValue(int data) { // add node to tree
     vertex* newvertex = new vertex(this->nullVertex, data);
 
     vertex* addTo = nullptr; // find node that should be added to
-    vertex* current = this->root;
+    vertex* current = this->rootVertex;
     while (current != this->nullVertex) {
         addTo = current;
         if (newvertex->value > current->value)
@@ -49,7 +49,7 @@ void redBlackTree::addValue(int data) { // add node to tree
 
     newvertex->parentVertex = addTo;
     if (addTo == nullptr) // root is null
-        this->root = newvertex;
+        this->rootVertex = newvertex;
     else if (newvertex->value > addTo->value)
         addTo->rightVertex = newvertex;
     else
@@ -67,62 +67,62 @@ void redBlackTree::addValue(int data) { // add node to tree
 }
 
 // Runs through cases 3, 4, and 5 to maintain the properties of a Red-Black Tree
-void redBlackTree::additionFix(vertex* current) {
+void redBlackTree::additionFix(vertex* cur) {
     vertex* uncle;
-    while (current->parentVertex->isRed()){ // don't fix insertion if the parent's color is black since doesn't violate RBT properties
-        if (current->parentVertex == current->parentVertex->parentVertex->rightVertex) {
-            uncle = current->parentVertex->parentVertex->leftVertex;
+    while (cur->parentVertex->isRed()){ // don't fix insertion if the parent's color is black since doesn't violate RBT properties
+        if (cur->parentVertex == cur->parentVertex->parentVertex->rightVertex) {
+            uncle = cur->parentVertex->parentVertex->leftVertex;
             if (uncle->isRed()) { // both parent & uncle of current node is red
                 // set the parent and uncle to black, set grandparent to red
                 uncle->color = 'b';
-                current->parentVertex->color = 'b';
-                current->parentVertex->parentVertex->color = 'r';
-                current = current->parentVertex->parentVertex; // check if current node's grandparent is root
+                cur->parentVertex->color = 'b';
+                cur->parentVertex->parentVertex->color = 'r';
+                cur = cur->parentVertex->parentVertex; // check if current node's grandparent is root
             } else {// uncle is black -> parent is left and node is right OR parent is right and node is left
-                if (current == current->parentVertex->leftVertex) { // current is the left child, set tree rotation through the current node's parent
-                    current = current->parentVertex;
-                    this->rightRotation(current);
+                if (cur == cur->parentVertex->leftVertex) { // current is the left child, set tree rotation through the current node's parent
+                    cur = cur->parentVertex;
+                    this->rightRotation(cur);
                 }
                 // uncle is black.  Parent is left and node is left OR parent is right and node is right, swap the parent and the grandparent 
-                current->parentVertex->color = 'b'; //colours
-                current->parentVertex->parentVertex->color = 'r';
+                cur->parentVertex->color = 'b'; //colours
+                cur->parentVertex->parentVertex->color = 'r';
                 // set tree rotation through current node's grandparent
-                this->leftRotation(current->parentVertex->parentVertex);
+                this->leftRotation(cur->parentVertex->parentVertex);
             }
         } 
         else {
-            uncle = current->parentVertex->parentVertex->rightVertex;
+            uncle = cur->parentVertex->parentVertex->rightVertex;
 
             if (uncle->isRed()) {// both the parent and the uncle of the current node is red
                 // then set the parent and uncle to black, and set the grandparent to red
                 uncle->color = 'b';
-                current->parentVertex->color = 'b';
-                current->parentVertex->parentVertex->color = 'r';
-                current = current->parentVertex->parentVertex; // check to see if current node's grandparent is root
+                cur->parentVertex->color = 'b';
+                cur->parentVertex->parentVertex->color = 'r';
+                cur = cur->parentVertex->parentVertex; // check to see if current node's grandparent is root
             } else {// uncle is black.  Parent is left and node is right OR parent is right and node is left
-                if (current == current->parentVertex->rightVertex) { // current node is the left child
+                if (cur == cur->parentVertex->rightVertex) { // current node is the left child
                     // set up a tree rotation through the current node's parent
-                    current = current->parentVertex;
-                    this->leftRotation(current);
+                    cur = cur->parentVertex;
+                    this->leftRotation(cur);
                 }
                 //  uncle is black, parent is left and node is left OR parent is right and node is right, s wap the parent and the grandparent
-                current->parentVertex->color = 'b'; // colours
-                current->parentVertex->parentVertex->color = 'r';
+                cur->parentVertex->color = 'b'; // colours
+                cur->parentVertex->parentVertex->color = 'r';
                 // set up a tree rotation through current node's grandparent
-                this->rightRotation(current->parentVertex->parentVertex);
+                this->rightRotation(cur->parentVertex->parentVertex);
             }
         }
-        if (current == this->root)
+        if (cur == this->rootVertex)
             break;
     }
-    this->root->color = 'b';
+    this->rootVertex->color = 'b';
 }
 
 // remove a node from the tree, used https://www.programiz.com/dsa/red-black-tree as a reference for deletion and deletion fix algorithms.
 bool redBlackTree::removeValue(int data) {
-    vertex* foundvertex = this->root;
-    vertex* toFix;
-    vertex* foundvertexOriginal;
+    vertex* foundvertex = this->rootVertex;
+    vertex* fix;
+    vertex* originalVertex;
 
     // find the node that should be deleted
     while (foundvertex != this->nullVertex) {
@@ -139,40 +139,40 @@ bool redBlackTree::removeValue(int data) {
         return false;
 
     // store node that we want to delete and the color of that node for later
-    foundvertexOriginal = foundvertex;
-    char foundvertexOriginalColor = foundvertexOriginal->color;
+    originalVertex = foundvertex;
+    char foundvertexOriginalColor = originalVertex->color;
 
     if (foundvertex->leftVertex == this->nullVertex) { // The node to delete has one non-leaf child to the right
-        toFix = foundvertex->rightVertex;
+        fix = foundvertex->rightVertex;
         this->transplant(foundvertex, foundvertex->rightVertex);
     } 
     else if (foundvertex->rightVertex == this->nullVertex) { // The node to delete has one non-leaf child to the left
-        toFix = foundvertex->leftVertex;
+        fix = foundvertex->leftVertex;
         this->transplant(foundvertex, foundvertex->leftVertex);
     } 
     else {
-        foundvertexOriginal = this->getMinimum(foundvertex->rightVertex); // get the in-order successor (the smallest node of the found node's right subtree)
-        foundvertexOriginalColor = foundvertexOriginal->color; // update the color of the minimum subtree
-        toFix = foundvertexOriginal->rightVertex; // need to fix the right child of minimum subtree
+        originalVertex = this->getMinimum(foundvertex->rightVertex); // get the in-order successor (the smallest node of the found node's right subtree)
+        foundvertexOriginalColor = originalVertex->color; // update the color of the minimum subtree
+        fix = originalVertex->rightVertex; // need to fix the right child of minimum subtree
 
-        if (foundvertexOriginal->parentVertex == foundvertex)
-            toFix->parentVertex = foundvertexOriginal;
+        if (originalVertex->parentVertex == foundvertex)
+            fix->parentVertex = originalVertex;
         else {
-            this->transplant(foundvertexOriginal, foundvertexOriginal->rightVertex);
-            foundvertexOriginal->rightVertex = foundvertex->rightVertex;
-            foundvertexOriginal->rightVertex->parentVertex = foundvertexOriginal;
+            this->transplant(originalVertex, originalVertex->rightVertex);
+            originalVertex->rightVertex = foundvertex->rightVertex;
+            originalVertex->rightVertex->parentVertex = originalVertex;
         }
 
-        this->transplant(foundvertex, foundvertexOriginal);
-        foundvertexOriginal->leftVertex = foundvertex->leftVertex;
-        foundvertexOriginal->leftVertex->parentVertex = foundvertexOriginal;
-        foundvertexOriginal->color = foundvertex->color;
+        this->transplant(foundvertex, originalVertex);
+        originalVertex->leftVertex = foundvertex->leftVertex;
+        originalVertex->leftVertex->parentVertex = originalVertex;
+        originalVertex->color = foundvertex->color;
     }
 
     delete foundvertex;
 
     if (foundvertexOriginalColor == 'b') // only fix RBT properties if we're removing a black node, since removing red nodes doesn't violate the properties of an RBT
-        this->removalFix(toFix);
+        this->removalFix(fix);
     return true;
 }
 
@@ -181,7 +181,7 @@ bool redBlackTree::removeValue(int data) {
 void redBlackTree::removalFix(vertex* toFix) {
     vertex* current;
 
-    while (toFix != root && !toFix->isRed()) {
+    while (toFix != rootVertex && !toFix->isRed()) {
         if (toFix == toFix->parentVertex->leftVertex){ // node to fix is on the left side of its parent
             current = toFix->parentVertex->rightVertex; // store the right sibling
             if (current->isRed()){ // right child of the parent of our current node is red
@@ -208,7 +208,7 @@ void redBlackTree::removalFix(vertex* toFix) {
                 toFix->parentVertex->color = 'b';
                 current->rightVertex->color = 'b';
                 this->leftRotation(toFix->parentVertex);
-                toFix = this->root;
+                toFix = this->rootVertex;
             }
         } else{ // same as above but all uses of right and left are swapped (tree is mirrored)
             current = toFix->parentVertex->leftVertex;
@@ -235,7 +235,7 @@ void redBlackTree::removalFix(vertex* toFix) {
                 toFix->parentVertex->color = 'b';
                 current->leftVertex->color = 'b';
                 this->rightRotation(toFix->parentVertex);
-                toFix = this->root;
+                toFix = this->rootVertex;
             }
         }
     }
@@ -255,47 +255,47 @@ vertex* redBlackTree::getUncle(vertex* node) {
 }
 
 // rotate the subtrees of an origin node to the left
-void redBlackTree::leftRotation(vertex* origin) {
-    vertex* right = origin->rightVertex;
-    origin->rightVertex = right->leftVertex;
+void redBlackTree::leftRotation(vertex* v) {
+    vertex* right = v->rightVertex;
+    v->rightVertex = right->leftVertex;
     if (right->leftVertex != this->nullVertex)
-        right->leftVertex->parentVertex = origin;
+        right->leftVertex->parentVertex = v;
 
-    right->parentVertex = origin->parentVertex;
-    if (origin->parentVertex == nullptr) // top of tree
-        this->root = right;
-    else if (origin == origin->parentVertex->leftVertex) // origin is to the right of the parent
-        origin->parentVertex->leftVertex = right;
+    right->parentVertex = v->parentVertex;
+    if (v->parentVertex == nullptr) // top of tree
+        this->rootVertex = right;
+    else if (v == v->parentVertex->leftVertex) // origin is to the right of the parent
+        v->parentVertex->leftVertex = right;
     else
-        origin->parentVertex->rightVertex = right;
+        v->parentVertex->rightVertex = right;
 
-    right->leftVertex = origin;
-    origin->parentVertex = right;
+    right->leftVertex = v;
+    v->parentVertex = right;
 }
 
 // Rotate the substrees of an origin node to the right
-void redBlackTree::rightRotation(vertex* origin) {
-    vertex* left = origin->leftVertex;
-    origin->leftVertex = left->rightVertex;
+void redBlackTree::rightRotation(vertex* v) {
+    vertex* left = v->leftVertex;
+    v->leftVertex = left->rightVertex;
     if (left->rightVertex != this->nullVertex)
-        left->rightVertex->parentVertex = origin;
+        left->rightVertex->parentVertex = v;
 
-    left->parentVertex = origin->parentVertex;
-    if (origin->parentVertex == nullptr)
-        this->root = left;
-    else if (origin == origin->parentVertex->rightVertex)
-        origin->parentVertex->rightVertex = left;
+    left->parentVertex = v->parentVertex;
+    if (v->parentVertex == nullptr)
+        this->rootVertex = left;
+    else if (v == v->parentVertex->rightVertex)
+        v->parentVertex->rightVertex = left;
     else
-        origin->parentVertex->leftVertex = left;
+        v->parentVertex->leftVertex = left;
 
-    left->rightVertex = origin;
-    origin->parentVertex = left;
+    left->rightVertex = v;
+    v->parentVertex = left;
 }
 
 // replace the node being deleted with its successor or predecessor node while maintaining properties of the RBT
 void redBlackTree::transplant(vertex* toDelete, vertex* replacement) {
     if (toDelete->parentVertex == nullptr) // top of tree
-        this->root = replacement;
+        this->rootVertex = replacement;
     else if (toDelete == toDelete->parentVertex->leftVertex)
         toDelete->parentVertex->leftVertex = replacement;
     else
@@ -304,19 +304,15 @@ void redBlackTree::transplant(vertex* toDelete, vertex* replacement) {
 }
 
 // get the minimum (predecessor) node of any node
-vertex* redBlackTree::getMinimum(vertex* origin) {
-    while (origin->leftVertex != this->nullVertex)
-        origin = origin->leftVertex;
-    return origin;
+vertex* redBlackTree::getMinimum(vertex* v) {
+    while (v->leftVertex != this->nullVertex)
+        v = v->leftVertex;
+    return v;
 }
 
-/*
-    Recursive helper function to display the tree
-    The vector parameter is used to add lines that connect nodes at the same
-   level in the tree to make visualization of the tree structure easier.
-*/
-void redBlackTree::display(vertex* current, vector<char> indent, bool left) {
-    if (current == this->nullVertex) // at end of subtree
+// to visualize the tree
+void redBlackTree::display(vertex* cur, vector<char> indent, bool left) {
+    if (cur == this->nullVertex) // at end of subtree
         return;
     // print and update for indentation
     for (vector<char>::iterator it = indent.begin(); it != indent.end(); it++)
@@ -326,30 +322,30 @@ void redBlackTree::display(vertex* current, vector<char> indent, bool left) {
     else
         indent.push_back('|');
     // print node value, position, and color
-    cout << (current == this->root ? "T" : (left ? "L" : "R")) << "--->";
-    cout << (current->isRed() ? red : "") << underline << current->value << reset << endl;
+    cout << (cur == this->rootVertex ? "T" : (left ? "L" : "R")) << "--->";
+    cout << (cur->isRed() ? red : "") << underline << cur->value << reset << endl;
     // display subtrees
-    display(current->rightVertex, indent, false);
-    display(current->leftVertex, indent, true);
+    display(cur->rightVertex, indent, false);
+    display(cur->leftVertex, indent, true);
 }
 
 // wrapper function to display the tree
 void redBlackTree::displayTree() {
     vector<char> indent;
-    this->display(this->root, indent, false);
+    this->display(this->rootVertex, indent, false);
 }
 
 // search for a value in the tree
-bool redBlackTree::findValue(int value) {
-    vertex* current = this->root; // start at the root
+bool redBlackTree::findValue(int val) {
+    vertex* current = this->rootVertex; // start at the root
     while (true) {
         if (current == this->nullVertex) // if at null node then value doesn't exist
             return false;
-        if (current->value == value) // node found
+        if (current->value == val) // node found
             return true;
 
         // continue to next node depending on if the value is less than or greater than the current node
-        if (current->value > value)
+        if (current->value > val)
             current = current->leftVertex;
         else
             current = current->rightVertex;
